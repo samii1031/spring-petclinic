@@ -150,6 +150,11 @@ Resources:
         Essential: true
         Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repo}:latest'
         Memory: 300
+        HealthCheck:
+            Command:
+              - "CMD-SHELL"
+              - "wget http://localhost:8080 || exit 1"
+            StrartPeriod: 300
         LogConfiguration:
           LogDriver: awslogs
           Options:
