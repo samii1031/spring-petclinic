@@ -97,6 +97,21 @@ Resources:
                     "Repo" : { "Fn::GetParam" : [ "BuildArtifact", "repo.json", "repo" ] }
                   }
               RunOrder: 1
+          - Name: DeployApp
+            Actions:
+            - InputArtifacts:
+              - Name: BuildArtifact
+              Name: BlueGreen
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: ECS
+              OutputArtifacts: []
+              Configuration:
+                ClusterName: spring-petclinic
+                ServiceName: petclinic
+                FileName: imagedefinitions.json
   ArtifactStoreBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -144,6 +159,10 @@ Resources:
           - Action:
             - s3:*
             Effect: Allow
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - "codedeploy:*"
             Resource: "*"
           - Action:
             - iam:CreateRole
@@ -264,6 +283,10 @@ Resources:
               Resource: "*"
             - Effect: Allow
               Action:
+                - "ecs:*"
+              Resource: "*"
+            - Effect: Allow
+              Action:
                 - "cloudformation:DescribeStacks"
                 - "cloudformation:CreateStack"
                 - "cloudformation:DeleteStack"
@@ -329,4 +352,3 @@ Resources:
                   - s3:GetObject
                   - s3:GetObjectVersion
                 Resource: "*"
-                  
